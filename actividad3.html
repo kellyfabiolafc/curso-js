@@ -1,15 +1,63 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-</head>
-<body>
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="./actividad3.css" />
+  </head>
+  <body>
     <!-- Formulario realizar cotización -->
     <!-- Compra una PC / portátil -->
-    <!-- Existen campos obligatorios / no obligatorios -->
+    <!-- Existan campos obligatorios / no obligatorios -->
     <!-- Generar un cuadro de diálogo con la confirmación -->
     <!-- Aplicar estilos CSS -->
-</body>
+    <h2>Cotización de PC/ Portátil</h2>
+    <form id="formCotizacion">
+      <div>
+        <label for="cliente">Nombre del cliente (*):</label>
+        <input type="text" id="cliente" minlength="2" required />
+      </div>
+
+      <div>
+        <label for="correo">Correo electrónico (*):</label>
+        <input type="email" id="correo" required />
+      </div>
+
+      <div>
+        <label for="equipo">Tipo de equipo (*):</label>
+        <select name="equipo" id="equipo" required>
+          <option value="">Selecciona</option>
+          <option value="PC de Escritorio">PC de Escritorio</option>
+          <option value="Portátil">Portátil</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="ram">Memoria RAM (*):</label>
+        <select name="ram" id="ram" required>
+          <option value="">Selecciona</option>
+          <option value="8GB">8 GB</option>
+          <option value="16GB">16 GB</option>
+          <option value="32GB">32 GB</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="telefono">Teléfono (Opcional):</label>
+        <input type="text" id="telefono" />
+      </div>
+
+      <div>
+        <label for="accesorios">Accesorios adicionales (Opcional):</label>
+        <input
+          type="text"
+          id="accesorios"
+          placeholder="Ej. Mouse, monitor, cooler..."
+        />
+      </div>
+
+      <button type="submit" id="cotizar">Solicitar Cotización</button>
+    </form>
+  </body>
 </html>
