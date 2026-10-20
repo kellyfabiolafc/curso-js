@@ -1,16 +1,104 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-</head>
-<body>
-    <!-- Construir un CUESTIONARIO (5 interrogantes) -->
-    <!-- Pregunta -->
-    <!-- 3 alternativas -->
-    <!-- Utilizar botones de desplazamiento para la navegación -->
-    <!-- El objetivo es que funcionen los botones y cambie la preguntas y respuetas  -->
-    <!-- Los datos que se iran mostrando deben estar dentro de un objeto -->
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Cuestionario</title>
+    <link rel="stylesheet" href="./actividad4.css">
+  </head>
+  <body>
+    <div id="cuestionario">
+      <h2>Cuestionario de programación web</h2>
+
+      <h3 id="pregunta"></h3>
+
+      <div id="alternativas"></div>
+
+      <button id="anterior" type="button">Anterior</button>
+      <button id="siguiente" type="button">Siguiente</button>
+    </div>
+
+    <script>
+      const cuestionario = [
+        {
+          pregunta: "¿Qué lenguaje estructura una página web?",
+          alternativas: ["CSS", "HTML", "JavaScript"],
+        },
+        {
+          pregunta: "¿Qué lenguaje da estilos a una página web?",
+          alternativas: ["HTML", "SQL", "CSS"],
+        },
+        {
+          pregunta: "¿Qué lenguaje agrega interactividad?",
+          alternativas: ["JavaScript", "HTML", "CSS"],
+        },
+        {
+          pregunta: "¿Qué método muestra mensajes en la consola?",
+          alternativas: ["console.write()", "console.log()", "print()"],
+        },
+        {
+          pregunta: "¿Qué palabra declara una constante?",
+          alternativas: ["var", "let", "const"],
+        },
+      ];
+
+      let indice = 0;
+      const respuestas = [];
+
+      const pregunta = document.getElementById("pregunta");
+      const alternativas = document.getElementById("alternativas");
+      const anterior = document.getElementById("anterior");
+      const siguiente = document.getElementById("siguiente");
+
+      function mostrarPregunta() {
+        pregunta.textContent =
+          indice + 1 + ". " + cuestionario[indice].pregunta;
+
+        alternativas.innerHTML = "";
+
+        cuestionario[indice].alternativas.forEach((opcion) => {
+          const etiqueta = document.createElement("label");
+          etiqueta.className = "opcion";
+
+          const radio = document.createElement("input");
+          radio.type = "radio";
+          radio.name = "respuesta";
+          radio.value = opcion;
+
+          // Recuperar la respuesta seleccionada
+          if (respuestas[indice] === opcion) {
+            radio.checked = true;
+          }
+
+          radio.addEventListener("change", () => {
+            respuestas[indice] = opcion;
+          });
+
+          etiqueta.appendChild(radio);
+          etiqueta.appendChild(document.createTextNode(opcion));
+
+          alternativas.appendChild(etiqueta);
+        });
+
+        anterior.disabled = indice === 0;
+
+        siguiente.disabled = indice === cuestionario.length - 1;
+      }
+
+      anterior.addEventListener("click", () => {
+        if (indice > 0) {
+          indice--;
+          mostrarPregunta();
+        }
+      });
+
+      siguiente.addEventListener("click", () => {
+        if (indice < cuestionario.length - 1) {
+          indice++;
+          mostrarPregunta();
+        }
+      });
+
+      mostrarPregunta();
+    </script>
   </body>
 </html>
