@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <button type="button" id="mensaje">Mensaje</button>
+    <input id="caja">
+   <script>
+      //Propiedad : características objetos (nombre, ubicación, color...)
+      //Método    : acciones (verbo infinitivos)
+      //Evento    : respuesta (clic, arrastrar)
+
+      //E1: Al cargar la página...
+      //DOM      : contenido de la página | Documento Object Model
+      document.addEventListener("DOMContentLoaded", function () {
+        console.log("Cragaod correcatmente ");
+        const button = document.getElementById("mensaje");
+      });
+
+      // ¿Qué significa addEventListener?
+      // Atrapar evento, por ejemplo: atención
+      // E3: focus (enfoque)
+      const contenido = document.getElementById("caja");
+      contenido.addEventListener("focus", function () {
+        console.log("El elemento activo la caja");
+      });
+    </script>
+  </body>
+</html>
+
