@@ -10,6 +10,7 @@ function invertir(texto) {
   }
   return textoInverso;
 }
+
 console.log("Texto inverso : ", invertir(texto));
 
 //Crear una variable donde almacene una dirección de correo electrónico
