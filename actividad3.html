@@ -59,5 +59,17 @@
 
       <button type="submit" id="cotizar">Solicitar Cotización</button>
     </form>
+    <script>
+       const formulario = document.getElementById("formCotizacion");
+
+  formulario.addEventListener("submit", function (event) {
+    event.preventDefault();
+
+    if (confirm("¿Está seguro de solicitar la cotización?")) {
+      alert("Cotización solicitada correctamente");
+      formulario.reset();
+    }
+  });
+    </script>
   </body>
 </html>
