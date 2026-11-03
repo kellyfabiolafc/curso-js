@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <style>
+      img {
+        max-width: 100%;
+      }
+    </style>
+    <h1 id="nombre">Nada que mostrar</h1>
+    <div id="descripcion">Seleccione un planeta de la lista</div>
+    <img
+      src=""
+      alt=""
+      id="imagen"
+    /><!-- src (source/origen), alt (alternative/descriptivo) -->
+    <hr />
+
+    <select name="planetas" id="planetas">
+      <!-- option[value=$]{$}*10 -->
+      <option value="">Seleccione</option>
+      <option value="1">Namek</option>
+      <option value="2">Tierra</option>
+      <option value="3">Vegeta</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+      <option value="6">6</option>
+      <option value="7">7</option>
+      <option value="8">8</option>
+      <option value="9">9</option>
+      <option value="10">10</option>
+    </select>
+    <script>
+      //El código JS solo debe ejecutarse cuando la página esté lista - "DOMContentLoaded"
+      document.addEventListener("DOMContentLoaded", () => {
+        async function obtenerDatosPlaneta(id) {
+          if (id === "" || id === undefined) {
+            document.getElementById("nombre").innerText = "Nada que mostrar";
+            document.getElementById("descripcion").innerHTML =
+              "Seleccione un planeta de la lista";
+            document.getElementById("imagen").removeAttribute("src");
+            return;
+          }
+
+          const URL = "https://dragonball-api.com/api/planets/2";
+
+          //HTTP SERVER CODE
+          //2XX : Proceso satisfactorio
+          //4XX : Error generado por el usuario
+          //5XX : Error en el servidor
+          //Petición... (await espera a que se resuelva la promesa)
+          const respuesta = await fetch(URL);
+
+          //Verificar: Si la respuesta NO es correcta
+          if (!respuesta.ok) {
+            console.log("Error en la petición");
+            return;
+          }
+
+          //La petición se realizó correctamente
+          const datos = await respuesta.json();
+          console.log(datos);
+
+          //Mostrar la descripción
+          //Mostrar nombre, descripción e imagen
+          document.getElementById("nombre").innerText = datos.name;
+          document.getElementById("descripcion").innerText = datos.description;
+          document.getElementById("imagen").setAttribute("src", datos.image);
+          document
+            .getElementById("imagen")
+            .setAttribute("alt", `Planeta de DB ${datos.name}`);
+        }
+
+        //Cuando se elija un planeta, consulto sus datos
+        document.getElementById("planetas").addEventListener("change", () => {
+          const idplaneta = document.getElementById("planetas").value;
+          obtenerDatosPlaneta(idplaneta);
+        });
+      });
+    </script>
+  </body>
+</html>

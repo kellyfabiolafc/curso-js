@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="./css/style-loader.css">
+</head>
+<body>
+  <!-- 
+  Utilizar API Dragon ball
+  Consulta    : Obtener la información de un personaje
+  Respuesta   : JSON conteniendo datos cadena, numéricos, objetos y arreglos
+  Renderizar  : Se debe escribir el ID en una CAJA DE TEXTO, al pulsar el botón BUSCAR
+                Obtendremos el nombre, la descripción, la fotografía del personaje y el 
+                planeta del personaje en (h1, p, img, strong). Además, cada una de sus
+                transformaciones, aparecerá como un elemento seleccionable de un <select>
+                utilizando ID y NAME.
+  -->
+
+  <!-- Buscador -->
+  <form action="" id="formBusqueda">
+    <input type="search" id="id" required>
+    <button type="submit">Buscar</button>
+  </form>
+
+  <!-- Resultados -->
+  <h1></h1>
+  <div id="animacion"></div>
+  <p></p>
+  <strong></strong>
+  <select name="transformaciones" id="transformaciones"></select>
+  <img src="" alt="" style="max-width: 250px;">
+
+  <!-- DIVIDE AND CONQUER / DIVIDE Y VENCERÁS -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      //Constantes
+      const formulario = document.getElementById("formBusqueda")
+      const id = document.getElementById("id")
+      const transformaciones = document.getElementById("transformaciones")
+      const animacion = document.getElementById("animacion")
+      //Nota: utilizaremos querySelector con la consigna que hay un solo elemento
+      const nombre = document.querySelector("h1")
+      const descripcion = document.querySelector("p")
+      const imagen = document.querySelector("img")
+      const planeta = document.querySelector("strong")
+
+      function resetUI(){
+        nombre.innerText = ""
+        descripcion.innerText = ""
+        imagen.removeAttribute("src")
+        planeta.innerText = ""
+        transformaciones.innerHTML = ""
+      }
+
+      formulario.addEventListener("submit", (e) => {
+        e.preventDefault() //Detengo el envío
+
+        const idBuscado = parseInt(id.value)
+        
+        if (idBuscado <= 0){
+          //Función reinicie UI
+          resetUI()
+          console.error('ID incorrecto')
+          return;
+        }
+
+        mostrarDatosPersonaje(idBuscado)
+      }) //addEventListener
+
+      async function mostrarDatosPersonaje(id){
+
+        //Este es el momento previo a la consulta (REQUEST)
+        resetUI()
+        descripcion.innerText = "Cargando..."
+        animacion.setAttribute("class", "loader")
+
+        const URL = `https://dragonball-api.com/api/characters/${id}`
+        const respuesta = await fetch(URL)
+
+        if (!respuesta.ok){
+          //Función reinicie UI
+          resetUI()
+          return
+        }
+
+        const datos = await respuesta.json()
+        console.log(datos)
+
+        nombre.innerText = datos.name
+        descripcion.innerText = datos.description
+        imagen.setAttribute("src", datos.image)
+        planeta.innerText = datos.originPlanet.name
+
+        animacion.removeAttribute("class")
+
+        //Transformaciones
+        const listaTransformaciones = datos.transformations
+        transformaciones.innerHTML = '' //Reset <select>
+
+        if (listaTransformaciones.length === 0){
+          const option = document.createElement("option")
+          option.value = ""
+          option.innerHTML = "Sin transformacion"
+          transformaciones.appendChild(option)
+          return
+        }
+
+        listaTransformaciones.forEach(transformacion => {
+          const option = document.createElement("option")
+          option.value = transformacion.id
+          option.innerHTML = transformacion.name
+          transformaciones.appendChild(option) //Agregar como un hijo
+        })
+      }
+
+    })
+  </script>
+  
+</body>
+</html>
