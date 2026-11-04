@@ -1,32 +1,215 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="es">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ejercicio 2 - Planetas</title>
+  <link rel="stylesheet" href="/css/ejercicio2.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
+
 <body>
-  // EJERCICIO 2
-// 1. Diseñar la estructura HTML: 
-//    - Crear un campo de texto o número para ingresar el código del planeta y un botón para realizar la búsqueda.
-//    - Agregar dos contenedores para listas no ordenadas (<ul>), uno destinado a mostrar los datos generales del planeta y otro para mostrar la lista de personajes que residen en él.
 
-// 2. Seleccionar los elementos en JavaScript: 
-//    - Capturar las referencias del DOM del input de búsqueda, el formulario y los contenedores de las dos listas desordenadas.
+  <main class="contenedor">
+    <header class="encabezado">
+      <h1 class="logo">STAR WARS</h1>
+      <p class="subtitulo">SWAPI · CONSULTA DE PLANETAS</p>
+    </header>
+    <!-- 1. Formulario de búsqueda -->
+    <form id="formulario">
+      <label for="codigo">Código del planeta:</label>
 
-// 3. Configurar la interacción del formulario: 
-//    - Añadir un escuchador de eventos para el envío del formulario, previniendo el envío tradicional del navegador para controlarlo mediante código asíncrono.
+      <div class="grupo-busqueda">
+        <input type="text" id="codigo" inputmode="numeric" placeholder="Ingrese el código del planeta" required />
+        <button type="submit" id="btnBuscar">Buscar</button>
+      </div>
 
-// 4. Consultar los datos del planeta: 
-//    - Realizar una petición HTTP asíncrona a la API utilizando el código del planeta proporcionado por el usuario para obtener el objeto JSON con la información detallada.
+    </form>
 
-// 5. Construir dinámicamente la lista de atributos del planeta: 
-//    - Extraer de la respuesta los campos solicitados: nombre, periodo de rotación, diámetro, gravedad, tipo de terreno y cantidad de habitantes.
-//    - Crear elementos de lista (<li>) por cada atributo con su respectiva etiqueta y valor, e insertarlos dentro del primer contenedor <ul>.
+    <!-- Mensaje de error -->
+    <p id="mensaje" ></p>
 
-// 6. Procesar y listar los personajes residentes: 
-//    - Verificar la lista o los enlaces de los residentes que devuelve el planeta. 
-//    - Realizar las peticiones necesarias para obtener la información de cada personaje habitante, extraer sus nombres y generar los elementos de lista (<li>) correspondientes para añadirlos al segundo contenedor <ul>.
+    <!-- Loader -->
+    <div id="loader" >
+
+      <div class="sables">
+        <div class="sable sable-verde">
+          <div class="hoja"></div>
+          <div class="mango"></div>
+        </div>
+        <div class="sable sable-rojo">
+          <div class="hoja"></div>
+          <div class="mango"></div>
+        </div>
+      </div>
+
+      <p>Consultando información...</p>
+
+    </div>
+
+    <!-- 2. Resultados de la busqueda -->
+    <div id="resultados">
+
+      <!-- Primera lista -->
+      <section class="seccion-resultados">
+        <h2>Datos del planeta</h2>
+        <ul id="listaPlaneta"></ul>
+      </section>
+
+      <!-- Segunda lista -->
+      <section class="seccion-resultados">
+        <h2>Personajes que habitan el planeta</h2>
+        <ul id="listaPersonajes"></ul>
+      </section>
+
+    </div>
+
+  </main>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+
+      // 3. Referenciar los elementos del DOM
+      const formulario = document.getElementById("formulario");
+      const codigo = document.getElementById("codigo");
+      const listaPlaneta = document.getElementById("listaPlaneta");
+      const listaPersonajes = document.getElementById("listaPersonajes");
+      const resultados = document.getElementById("resultados");
+      const mensaje = document.getElementById("mensaje");
+      const loader = document.getElementById("loader");
+      const btnBuscar = document.getElementById("btnBuscar");
+
+      // 4. Limpiar resultados 
+      function resetUI() {
+        listaPlaneta.innerHTML = "";
+        listaPersonajes.innerHTML = "";
+        resultados.style.display = "none";
+        mensaje.textContent = "";
+      }
+
+      // 5. Escuchar el envío del formulario
+      formulario.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const valor = codigo.value.trim();
+        const idBuscado = Number(valor);
+
+        // Validar que el ID sea un número entero positivo usando expresión regular
+        if (
+          !/^[0-9]+$/.test(valor) ||
+          !Number.isSafeInteger(idBuscado) ||
+          idBuscado <= 0
+        ) {
+          resetUI();
+          mensaje.textContent =
+            "Ingrese un código numérico entero mayor que cero.";
+          return;
+        }
+
+        mostrarDatosPlaneta(idBuscado);
+      });
+
+      // 6. Consulta principal del planeta
+      async function mostrarDatosPlaneta(id) {
+
+        resetUI();
+        loader.style.display = "block";
+        btnBuscar.disabled = true;
+
+        try {
+          const URL = `https://swapi.dev/api/planets/${id}/`;
+
+          const respuesta = await fetch(URL);
+
+          // Validar si el planeta existe
+          if (!respuesta.ok) {
+
+            if (respuesta.status === 404) {
+              mensaje.textContent =
+                "No se encontró un planeta con ese código.";
+              return;
+            }
+
+            throw new Error("Error al consultar el planeta");
+          }
+
+          const datos = await respuesta.json();
+
+          console.log("Datos del planeta:", datos);
+
+          // 7. Mostrar datos en la primera lista
+          listaPlaneta.innerHTML = `
+            <li>Nombre: ${datos.name}</li>
+            <li>Periodo de rotación: ${datos.rotation_period} horas</li>
+            <li>Diámetro: ${datos.diameter} km</li>
+            <li>Gravedad: ${datos.gravity}</li>
+            <li>Tipo de terreno: ${datos.terrain}</li>
+            <li>Cantidad de habitantes: ${datos.population}</li>
+          `;
+
+          resultados.style.display = "block";
+
+          // 8. Obtener las URL de los habitantes
+          const habitantes = datos.residents;
+
+          // Validar si existen habitantes registrados
+          if (habitantes && habitantes.length > 0) {
+
+            // Recorrer cada URL utilizando for...of
+            for (const url of habitantes) {
+
+              try {
+                // Subconsulta para obtener cada personaje
+                const respuestaPersonaje = await fetch(url);
+
+                if (!respuestaPersonaje.ok) {
+                  throw new Error("Error al consultar el personaje");
+                }
+
+                const datosPersonaje =
+                  await respuestaPersonaje.json();
+
+                // 9. Mostrar el nombre en la segunda lista
+                const elemento = document.createElement("li");
+                elemento.textContent = datosPersonaje.name;
+                listaPersonajes.appendChild(elemento);
+
+              } catch (errorPersonaje) {
+                console.error(
+                  "Error al consultar habitante:",
+                  errorPersonaje
+                );
+
+                const elemento = document.createElement("li");
+                elemento.textContent =
+                  "No se pudo cargar un habitante.";
+                listaPersonajes.appendChild(elemento);
+              }
+            }
+
+          } else {
+            listaPersonajes.innerHTML = `
+              <li>No hay habitantes registrados.</li>
+            `;
+          }
+
+        } catch (error) {
+          console.error("Error en la consulta:", error);
+
+          mensaje.textContent =
+            "No se pudo completar la consulta. Intente nuevamente.";
+
+        } finally {
+          // Ocultar loader al terminar las consultas
+          loader.style.display = "none";
+          btnBuscar.disabled = false;
+        }
+      }
+
+    });
+  </script>
+
 </body>
-</body>
+
 </html>
